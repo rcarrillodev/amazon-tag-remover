@@ -1,16 +1,21 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8" />
-	</head>
 
-	<body>
-		<form>
-			<label>Disable notifications: <input type="checkbox" id="disable-notifications" /></label> <br />
-			<br />
-			<button type="submit">Save</button>
-		</form>
-	</body>
-	<script src="browser-polyfill.min.js"></script>
-	<script src="options.js"></script>
+<head>
+	<meta charset="utf-8" />
+</head>
+
+<body>
+	<form>
+		<label>Disable notifications: <input type="checkbox" id="disable-notifications" /></label> <br />
+		<br />
+		<label>Whitelist</label>
+		<input type="text" placeholder="Add a referral code that you want to support" id="referral" />
+		<ul id="whitelist"></ul>
+		<button type="submit">Save</button>
+	</form>
+</body>
+<script src="browser-polyfill.min.js"></script>
+<script src="options.js"></script>
+
 </html>
