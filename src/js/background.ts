@@ -1,6 +1,6 @@
 import { storage } from './api';
-
 let tags: string[] = [];
+let whiteList: string[] = [];
 const amazonTagRemoverNotification = 'amazon-tag-remover-notification';
 const amazonURLs = [
 	'*://*.amazon.ae/*',
@@ -72,6 +72,12 @@ browser.webNavigation.onCompleted.addListener(
 	}
 );
 
+function getWhiteList(result:any){
+	if (!result.whiteList) {
+		return;
+	}
+	whiteList = result.whiteList.replace(",","\n");
+}
 function interceptRequest(request: BeforeRequestResponse) {
 	if (request && request.url) {
 		const sanitizedResult = sanitizeURL(request.url);
@@ -82,6 +88,7 @@ function interceptRequest(request: BeforeRequestResponse) {
 }
 
 function sanitizeURL(urlString: string) {
+	storage.get('whiteList').then(getWhiteList);
 	let rawURL = decodeURIComponent(urlString);
 	// URL does not contain a valid query parameter, patch it
 	if (!rawURL.includes('?') && rawURL.includes('&')) {
@@ -91,7 +98,7 @@ function sanitizeURL(urlString: string) {
 	let match = false;
 	const searchParams = url.searchParams;
 	const tag = searchParams.get('tag');
-	if (tag && !url.pathname.includes('watchlistToggle')) {
+	if (tag && !whiteList.includes(tag) && !url.pathname.includes('watchlistToggle')) {
 		tags.push(tag);
 		match = true;
 		searchParams.delete('tag');

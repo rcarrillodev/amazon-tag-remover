@@ -5,22 +5,11 @@ function saveOptions(e: Event) {
 	storage.set({
 		disableNotifications: document.querySelector<HTMLInputElement>('#disable-notifications')!.checked,
 	});
-	if (document.querySelector<HTMLInputElement>('#referral')?.value) {
-		let result;
-		storage.get('whiteList').then((result) => {
-			if (!result) {
-				storage.set({
-					whiteList: document.querySelector<HTMLInputElement>('#referral')?.value,
-				});
-				return;
-			}
-			let whiteList = result.whiteList.split(',');
-			whiteList.push(document.querySelector<HTMLInputElement>('#referral')?.value);
-			storage.set({
-				whiteList: whiteList.toString(),
-			});
-		});
-	}
+	let list = new Set(document.querySelector<HTMLInputElement>('#referral')?.value.replace(/\n/,",").split(","));
+	storage.set({
+		whiteList: [...list].join(','),
+	});
+	window.close()
 }
 
 function restoreOptions() {
@@ -28,16 +17,12 @@ function restoreOptions() {
 		document.querySelector<HTMLInputElement>('#disable-notifications')!.checked = result.disableNotifications;
 	}
 	function showWhiteList(result: any) {
+		debugger
 		if (!result.whiteList) {
 			return;
 		}
-		console.log(result.whiteList.split(','));
-		let r = result.whiteList.split(',');
-		r.forEach((element: string) => {
-			let item = document.createElement('li');
-			item.appendChild(document.createTextNode(element));
-			document.querySelector<HTMLUListElement>('#whitelist')?.appendChild(item);
-		});
+		console.log(result.whiteList.toString())
+		document.querySelector<HTMLTextAreaElement>('#referral')!.value = result.whiteList.replace(",","\n");
 	}
 	storage.get('whiteList').then(showWhiteList);
 	storage.get('disableNotifications').then(setCurrentChoice);
